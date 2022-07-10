@@ -408,26 +408,26 @@ Newsfeed.Game = (function() {
 
     }
     Game.prototype.update = function() {
-
+        console.log((this.game.canvas.width * .2) / 10)
         if (this.isJumping) {
 
             if (this.game.input.activePointer.isDown) {
                 if (this.game.input.activePointer.x < this.game.canvas.width * .5) {
-                    this.curVel = 4;
+                    if (Newsfeed.Global.isMobile) { this.curVel = (this.game.canvas.width * .2) / 10; } else { this.curVel = 4 }
                     this.pineapple.body.x -= this.curVel;
                     this.bckBg1.cameraOffset.x -= (this.curVel / 4) / 6;
                 } else {
-                    this.curVel = 4;
+                    if (Newsfeed.Global.isMobile) { this.curVel = (this.game.canvas.width * .2) / 10; } else { this.curVel = 4 }
                     this.pineapple.body.x += this.curVel;
                     this.bckBg1.cameraOffset.x += (this.curVel / 4) / 6;
                 }
             }
             if (this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
-                this.curVel = 4;
+                if (Newsfeed.Global.isMobile) { this.curVel = (this.game.canvas.width * .2) / 10; } else { this.curVel = 4 }
                 this.pineapple.body.x -= this.curVel;
                 this.bckBg1.cameraOffset.x -= (this.curVel / 4) / 6;
             } else if (this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
-                this.curVel = 4;
+                if (Newsfeed.Global.isMobile) { this.curVel = (this.game.canvas.width * .2) / 10; } else { this.curVel = 4 }
                 this.pineapple.body.x += this.curVel;
                 this.bckBg1.cameraOffset.x += (this.curVel / 4) / 6;
             }
