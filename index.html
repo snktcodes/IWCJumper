@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="ad.orientation" content="portrait">
+    <meta name="ad.size" content="width=320,height=480">
+    <title>JUMPER</title>
+
+    <style>
+        body {
+            margin: 0;
+            background-color: #1F006B;
+            background-image: linear-gradient(to right, #1F006B, #B203BE);
+            overflow-x: hidden;
+            width: 100%;
+            min-height: 100vh;
+        }
+        
+        #game-sec {
+            display: block;
+            background-color: #1F006B;
+            background-image: linear-gradient(to right, #1F006B, #B203BE);
+            position: absolute;
+            height: 100%;
+            font-family: "font1";
+            z-index: 10000;
+            overflow: hidden;
+            left: 0;
+            right: 0;
+            margin: auto;
+        }
+        
+        #eee {
+            font-family: "font1";
+            color: transparent;
+            z-index: -1;
+        }
+        
+        #rotate {
+            display: none;
+            background-color: #1F006B;
+            background-image: linear-gradient(to right, #1F006B, #B203BE);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10000;
+        }
+        
+        #rotate.active {
+            display: block;
+        }
+        
+        #rotate img {
+            width: 50%;
+            max-width: 150px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        canvas {
+            image-rendering: optimizeSpeed;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: -webkit-optimize-contrast;
+        }
+        
+        #btnCTA1,
+        #btnCTA2,
+        #btnCTA3 {
+            width: 0;
+            height: 0;
+            opacity: 0;
+            z-index: -1;
+        }
+    </style>
+    <script src="./lib/phaser.2.11.0.min.js"></script>
+    <script src="./lib/jquery.js"></script>
+    <script src="./js/global.js"></script>
+    <script src="./js/responsive-util.js"></script>
+    <script src="./js/imageLoader.js"></script>
+    <script src="./js/title2.js"></script>
+    <script src="./js/game.js"></script>
+    <script src="./js/title.js"></script>
+    <script src="./js/boot.js"></script>
+
+</head>
+
+
+<body>
+
+
+    <div id="game-sec">
+    </div>
+    <div id="eee">ABCD</div>
+
+    <input id="btnCTA1" onclick="fnctabtn1()"></input>
+    <input id="btnCTA2" onclick="fnctabtn2()"></input>
+    <input id="btnCTA3" onclick="fnctabtn3()"></input>
+
+    <script>
+        var deviceDetector = function() {
+            var b = navigator.userAgent.toLowerCase(),
+                a = function(a) {
+                    void 0 !== a && (b = a.toLowerCase());
+                    return /(ipad|tablet|(android(?!.*mobile))|(windows(?!.*phone)(.*touch))|kindle|playbook|silk|(puffin(?!.*(IP|AP|WP))))/.test(b) ? "tablet" : /(mobi|ipod|phone|blackberry|opera mini|fennec|minimo|symbian|psp|nintendo ds|archos|skyfire|puffin|blazer|bolt|gobrowser|iris|maemo|semc|teashark|uzard)/.test(b) ? "phone" : "desktop"
+                };
+            return {
+                device: a(),
+                detect: a,
+                isMobile: "desktop" != a() ? !0 : !1,
+                userAgent: b
+            }
+        }();
+
+        if (deviceDetector.isMobile) {
+            document.getElementById("game-sec").style.width = "100%";
+        } else {
+            document.getElementById("game-sec").style.width = "400px";
+        }
+
+        FbPlayableAd.onCTAClick();
+
+        function fnctabtn1() {
+            console.log("fnctabtn1");
+            var url = "https://apps.apple.com/us/app/iwc-schaffhausen-app/id1558418880";
+            window.open(url);
+        }
+
+        function fnctabtn2() {
+            console.log("fnctabtn2");
+            var url = "https://play.google.com/store/apps/details?id=com.iwc.fax.android&hl=de&gl=US";
+            window.open(url);
+        }
+
+        function fnctabtn3() {
+            console.log("fnctabtn3");
+            var url = "https://appgallery.huawei.com/#/app/C104311783";
+            window.open(url);
+        }
+    </script>
+
+</body>
+
+</html>
