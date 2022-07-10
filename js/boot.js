@@ -64,19 +64,7 @@ var Newsfeed = Newsfeed || {};
             this.game.state.start("Loader");
         };
 
-        Boot.prototype.setUID = function(v) {
 
-            Newsfeed.Global.U_ID = JSON.parse(v)["UID"];
-            console.log("UID SET" + Newsfeed.Global.U_ID)
-            Newsfeed.Global.gameKey = JSON.parse(v)["gamekey"];
-
-            setTimeout((function() {
-
-                this.game.state.start("Loader");
-
-            }).bind(this), 0);
-
-        };
 
         return Boot;
     })();

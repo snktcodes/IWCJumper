@@ -10,6 +10,7 @@ Newsfeed.Game = (function() {
     };
 
     Game.prototype.create = function() {
+        this.boolmoveAllowed = false;
         this.gameStarted = false;
         this.effectCtr = 0;
         this.game.stage.backgroundColor = "#316BB6";
@@ -408,8 +409,8 @@ Newsfeed.Game = (function() {
 
     }
     Game.prototype.update = function() {
-        console.log((this.game.canvas.width * .2) / 10)
-        if (this.isJumping) {
+        /* console.log(this.startGamma, " startGamma") */
+        if (this.isJumping && this.startGamma) {
 
             if (this.game.input.activePointer.isDown) {
                 if (this.game.input.activePointer.x < this.game.canvas.width * .5) {

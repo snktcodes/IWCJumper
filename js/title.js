@@ -58,6 +58,35 @@ Newsfeed.Title = (function() {
         this.cross.x = this.game.canvas.width / 2;
         this.cross.y = this.game.canvas.height * .5;
 
+
+        this.shoe1 = this.game.add.sprite(0, 0, "shoe1");
+        this.shoe1.anchor.setTo(.5);
+        this.shoe1.name = "shoe1";
+        this.shoe1.resizeFactor = 17;
+        this.shoe1.x = this.game.canvas.width / 2;
+        this.shoe1.y = this.game.canvas.height / 2;
+
+        this.shoe2 = this.game.add.sprite(0, 0, "shoe2");
+        this.shoe2.anchor.setTo(.5);
+        this.shoe2.name = "shoe2";
+        this.shoe2.resizeFactor = 17;
+        this.shoe2.x = this.game.canvas.width / 2;
+        this.shoe2.y = this.game.canvas.height / 2;
+
+        var tween2 = this.add.tween(this.shoe1);
+        tween2.to({ y: this.shoe1.y + this.shoe1.height * .1 }, 1000, "Linear");
+        tween2.repeat(10, 0);
+        tween2.yoyo(true);
+        var tween3 = this.add.tween(this.shoe2);
+        tween3.to({ y: this.shoe2.y + this.shoe2.height * .1 }, 1000, "Linear");
+        tween3.repeat(10, 0);
+        tween3.yoyo(true);
+        tween2.start();
+        setTimeout(() => {
+            tween3.start();
+        }, 600);
+
+
         this.player = this.game.add.sprite(this.game.canvas.width * .5, this.game.canvas.height * .2, "player");
         this.player.anchor.setTo(.5);
         this.player.name = "player";
@@ -70,7 +99,7 @@ Newsfeed.Title = (function() {
 
         var tween = this.add.tween(this.player);
         tween.to({ x: playerX, y: playerY }, 2500, "Linear");
-        tween.repeat(10, 1000);
+        tween.repeat(10, 0);
         tween.start();
 
         this.bottom = this.game.add.sprite(this.game.canvas.width * .5, this.game.canvas.height, "bottom");

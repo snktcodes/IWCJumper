@@ -251,7 +251,7 @@ Newsfeed.ResponsiveGame = function() {
                 //console.log(_scene[key].name,_scene[key].resizeFactor," favlue")
 
                 if (this.isEligibleForResponsiveness(_scene[key].type) && !(_scene[key].name in this.dimensionArr)) {
-                    console.log(key, " Item")
+                    /* console.log(key, " Item") */
                     _scene[key].dimension = {
                         w: _scene[key].width,
                         h: _scene[key].height
