@@ -5,10 +5,7 @@ var emitter0;
 var emitterConfetti;
 var emitterConfetti1;
 Newsfeed.Game = (function() {
-    function Game() {
-
-    };
-
+    function Game() {};
     Game.prototype.create = function() {
         this.boolmoveAllowed = false;
         this.gameStarted = false;
@@ -32,8 +29,8 @@ Newsfeed.Game = (function() {
         this.onFlyBoolComplete = false;
         this.degree = 1;
         this.spaceTileNum = .3;
-        this.isVelocityY = 1.05;
-        this.gravityY = 1.4;
+        this.isVelocityY = 1.3;
+        this.gravityY = 2.2;
         this.scoreNum = 0;
         this.firstBool = false;
         this.secondBool = false;
@@ -65,110 +62,98 @@ Newsfeed.Game = (function() {
         this.tileYMap = [2, 3.5, 5, 6.5, 8];
         this.tileYMap2 = [4, 5, 6];
         this.bckBg1 = this.game.add.sprite(0, 0, "bck1");
-        this.bckBg1.anchor.setTo(.5, 1);
-        this.bckBg1.scale.setTo(5);
-        this.bckBg1.name = "bckBg1";
-        this.bckBg1.resizeFactor = 7;
+        this.bckBg1.anchor.setTo(.5, .9);
+        /* this.bckBg1.scale.setTo(5); */
+        this.bckBg1.name = "bckBg1ww";
+        this.bckBg1.resizeFactor = 30;
         this.bckBg1.x = this.game.canvas.width / 2;
         this.bckBg1.y = this.game.canvas.height;
         this.bckBg1.fixedToCamera = true;
-
         this.pineappleStartedGame = false;
-
         this.fnStartG.call(this);
     };
-
-
     Game.prototype.fnStartG = function() {
-
-
-        this.fps = 5;
+        this.fps = 24;
         this.platforms = this.game.add.group();
         this.platforms.enableBody = true;
         this.smallTiles = this.game.add.group();
         this.smallTiles.enableBody = true;
         this.currentValueDeg = 0;
-
-
         this.pineapple = this.game.add.sprite(0, 0, 'jumpUp');
         this.pineapple.anchor.setTo(.5, 1);
-        this.pineapple.scale.setTo(3);
+        this.pineapple.scale.setTo(3.2);
         this.pineapple.name = "pineapplek";
-        this.pineapple.resizeFactor = 30;
+        this.pineapple.resizeFactor = 40;
         this.pineapple.x = this.game.canvas.width * .5;
         this.pineapple.y = Newsfeed.Global.pineY;
         this.pineapple.alpha = 1;
         this.pineapple.animations.add('jumpUp');
         this.pineapple.animations.add('jumpDown');
-
         this.diamond1 = this.game.add.sprite(this.game.canvas.width * 2.5, this.game.canvas.height * .5, 'diamond1');
         this.diamond1.anchor.setTo(.5, 1);
         this.diamond1.name = "diamonddiamond";
         this.diamond1.resizeFactor = 30;
         this.diamond1.alpha = 1;
         this.diamond1.animations.add('diamond1anim');
-
         this.diamond2 = this.game.add.sprite(this.game.canvas.width * 2.5, this.game.canvas.height * .6, 'diamond2');
         this.diamond2.anchor.setTo(.5, 1);
         this.diamond2.name = "diamonddiamond2";
         this.diamond2.resizeFactor = 30;
         this.diamond2.alpha = 1;
         this.diamond2.animations.add('diamond2anim');
-
         this.diamond3 = this.game.add.sprite(this.game.canvas.width * 2.5, this.game.canvas.height * .7, 'diamond3');
         this.diamond3.anchor.setTo(.5, 1);
         this.diamond3.name = "diamonddiamond3";
         this.diamond3.resizeFactor = 30;
         this.diamond3.alpha = 1;
         this.diamond3.animations.add("diamond3anim");
-
         this.spacing = this.game.canvas.height * this.spaceTileNum;
         this.flyPower = false;
-
-
         Newsfeed.Global.responsiveObj.notify("item-fill-and-resize-all", {
             scene: this
         });
-
         this.model = 4;
-
         this.initPlatforms();
-
         window.addEventListener("deviceorientation", handleOrientation.bind(this), true);
+        const delay = 1;
+        const limit = 21;
+        let i = 1;
+        var that = this;
+        const limitedInterval = setInterval(() => {
+            var y = delay * i++;
+            if (i > limit) {
+                clearInterval(limitedInterval);
+                that.spriteOut();
+            }
+        }, delay * 1000);
     }
 
     function randomNumber(min, max) {
         return Math.random() * (max - min) + min;
     }
-
     Game.prototype.fnResetSSIZEE = function() {
-        /* console.log("fnResetSSIZEE") */
         if (this.timerObj) {
             clearTimeout(this.timerObj);
             timerObj = null;
         }
         this["tile2"].body.setSize(this["tile2"].width * 0.2 / this["tile2"].scale.x, 20, this.game.canvas.width * .02 / this["tile2"].scale.x, 0);
     };
-
     Game.prototype.fnResetSSIZEE2 = function() {
         /* console.log("fnResetSSIZEE2") */
         if (this.timerObj) {
             clearTimeout(this.timerObj);
             timerObj = null;
         }
-
         this["tile2"].body.setSize(this["tile2"].width * 0.2 / this["tile2"].scale.x, 20, this.game.canvas.width * .02 / this["tile2"].scale.x, 0);
         /* this["tile1"].body.reset(this["tile1"].x,this["tile1"].y); */
         /*  this.pineapple.body.setSize(this.pineapple.width * 0.8, this.pineapple.height * .1, this.pineapple.width * 0.2, this.pineapple.height * .85);
          */
     };
-
     Game.prototype.resize = function(width, height) {
         Newsfeed.Global.responsiveObj.notify("item-resize", {
             scene: this
         });
     };
-
     Game.prototype.fnaudioNavigation1 = function() {
         switch (this.audioNavigation1.frameName) {
             case "mute":
@@ -188,7 +173,6 @@ Newsfeed.Game = (function() {
                 break;
         }
     };
-
     Game.prototype.initPlatforms = function() {
         bottom = this.game.canvas.height * .9;
         top1 = this.tileHeight - 20;
@@ -205,7 +189,6 @@ Newsfeed.Game = (function() {
         }
         this.itemCam = this.platforms.getFirstAlive();
         this.currentLast = this.platforms.getFirstAlive().y;
-
         this.footer1 = this.game.add.sprite(0, 0, "footer");
         this.footer1.anchor.setTo(.5, 1);
         this.footer1.name = "footerTitle1";
@@ -218,8 +201,6 @@ Newsfeed.Game = (function() {
                 item: this.footer1
             }
         });
-
-
         this.game.world.swap(this.footer1, this.pineapple);
         this.pineapple.enableBody = true;
         this.game.physics.arcade.enable(this.pineapple);
@@ -227,17 +208,12 @@ Newsfeed.Game = (function() {
         this.pineapple.immovable = true;
         this.pineapple.body.collideWorldBounds = true;
         this.pineapple.body.setSize(this.pineapple.width * 0.25 / this.pineapple.scale.x, this.pineapple.height * .1 / this.pineapple.scale.y, this.pineapple.width * 0.4 / this.pineapple.scale.x, this.pineapple.height * .75 / this.pineapple.scale.y);
-
-        this.pineapple.body.bounce.y = 0.1;
-
+        this.pineapple.body.bounce.y = 0.2;
         this.pineapple.body.checkCollision.up = false;
         this.pineapple.body.checkCollision.left = true;
         this.pineapple.body.checkCollision.right = true;
         this.pineapple.body.checkCollision.down = false;
-
-        this.pineapple.body.velocity.y = -this.game.canvas.height * 1.8;
-
-
+        /* this.pineapple.body.velocity.y = -this.game.canvas.height * 1.8; */
         Newsfeed.Global.responsiveObj.notify("item-tween-to-Y", {
             scene: this,
             props: {
@@ -248,13 +224,8 @@ Newsfeed.Game = (function() {
                 Ease: Phaser.Easing.Cubic.InOut
             }
         });
-
         //this.game.add.tween(this.pineapple1.scale).to({ x: this.game.canvas.width * .0015, y: this.game.canvas.width * .0015 }, 3000, Phaser.Easing.Exponential.Out, true);
-
-
-
     };
-
     Game.prototype.addPlatform = function(y) {
         if (typeof(y) == "undefined") {
             y -= this.tileHeight;
@@ -274,7 +245,6 @@ Newsfeed.Game = (function() {
             }
         }
     };
-
     Game.prototype.addTile2 = function(x, y) {
         this.tilectr++;
         this["tile" + this.tilectr] = this.platforms.getFirstDead();
@@ -292,21 +262,15 @@ Newsfeed.Game = (function() {
                 var _yy = 0;
                 var _ww = this["tile" + this.tilectr].width / this["tile" + this.tilectr].scale.x;
                 var _hh = 20;
-
                 this["tile" + this.tilectr].body.setSize(_ww, _hh, _xx, _yy);
-
-
                 break;
             case 2:
                 this["tile" + this.tilectr].x = x;
-                /* console.log(randomNumber(3, 5), " rnnn") */
                 this["tile" + this.tilectr].loadTexture("tile" + Math.floor(randomNumber(3, 6)));
-
                 var _xx = this["tile" + this.tilectr].width * .36 / this["tile" + this.tilectr].scale.x;
                 var _yy = (this["tile" + this.tilectr].height * .4) / this["tile" + this.tilectr].scale.y;
                 var _ww = this["tile" + this.tilectr].width * .3 / this["tile" + this.tilectr].scale.x;
                 var _hh = 20;
-
                 /* this["tile" + this.tilectr].scale.setTo(1); */
                 this["tile" + this.tilectr].body.setSize(_ww, _hh, _xx, _yy);
                 //this["tile" + this.tilectr].body.setSize(this["tile" + this.tilectr].width * 0.2 / this["tile" + this.tilectr].scale.x, 20, this.game.canvas.width * .15 / this["tile" + this.tilectr].scale.x, 0);
@@ -317,35 +281,26 @@ Newsfeed.Game = (function() {
     function shuffle(array) {
         let currentIndex = array.length,
             randomIndex;
-
         // While there remain elements to shuffle.
         while (currentIndex != 0) {
-
             // Pick a remaining element.
             randomIndex = Math.floor(Math.random() * currentIndex);
             currentIndex--;
-
             // And swap it with the current element.
             [array[currentIndex], array[randomIndex]] = [
                 array[randomIndex], array[currentIndex]
             ];
         }
-
         return array;
     }
-
     Game.prototype.addTile = function(x, y) {
         this.tilectr++;
-
         var tarr = ["tile", "tile6", "tile8"];
-
         this["tile" + this.tilectr] = this.platforms.create(x, y, shuffle(tarr)[0]);
-
         this["tile" + this.tilectr].body.velocity.y = 0;
-
         this["tile" + this.tilectr].anchor.setTo(.5, 1);
         this["tile" + this.tilectr].name = y + "tile" + x + randomNumber(1, 99999) + "F%" + this.tilectr;
-        this["tile" + this.tilectr].resizeFactor = 7;
+        this["tile" + this.tilectr].resizeFactor = 7.5;
         this["tile" + this.tilectr].body.setSize(this["tile" + this.tilectr].width / this["tile" + this.tilectr].scale.x, 20, 0, 0);
         this["tile" + this.tilectr].body.immovable = true;
         this["tile" + this.tilectr].body.checkCollision.up = true;
@@ -363,7 +318,6 @@ Newsfeed.Game = (function() {
     }
 
     function handleOrientation(event) {
-
         var absolute = event.absolute;
         var alpha = event.alpha;
         var beta = event.beta;
@@ -373,14 +327,12 @@ Newsfeed.Game = (function() {
         } else {
             this.gammaVal = 0;
         }
-
     };
 
     function between(x, min, max) {
         return x >= min && x <= max;
     }
     Game.prototype.animationStopped2 = function() {
-
         this.animationCompleted = false;
         this.UPRBool = false;
         this.dropJump = false;
@@ -406,93 +358,73 @@ Newsfeed.Game = (function() {
         this.twB = this.game.add.tween(this.boostThunder).to({ alpha: 0 }, 200, Phaser.Easing.Back.InOut, true);
         this.twB.onComplete.add(this.loopBlink.bind(this), this);
         /* } */
-
     }
     Game.prototype.update = function() {
-        /* console.log(this.startGamma, " startGamma") */
         if (this.isJumping && this.startGamma) {
-
             if (this.game.input.activePointer.isDown) {
                 if (this.game.input.activePointer.x < this.game.canvas.width * .5) {
                     if (Newsfeed.Global.isMobile) { this.curVel = (this.game.canvas.width * .2) / 10; } else { this.curVel = 4 }
                     this.pineapple.body.x -= this.curVel;
-                    this.bckBg1.cameraOffset.x -= (this.curVel / 4) / 6;
+                    this.bckBg1.cameraOffset.x -= (this.curVel / 4) / 8;
                 } else {
                     if (Newsfeed.Global.isMobile) { this.curVel = (this.game.canvas.width * .2) / 10; } else { this.curVel = 4 }
                     this.pineapple.body.x += this.curVel;
-                    this.bckBg1.cameraOffset.x += (this.curVel / 4) / 6;
+                    this.bckBg1.cameraOffset.x += (this.curVel / 4) / 8;
                 }
             }
             if (this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
                 if (Newsfeed.Global.isMobile) { this.curVel = (this.game.canvas.width * .2) / 10; } else { this.curVel = 4 }
                 this.pineapple.body.x -= this.curVel;
-                this.bckBg1.cameraOffset.x -= (this.curVel / 4) / 6;
+                this.bckBg1.cameraOffset.x -= (this.curVel / 4) / 8;
             } else if (this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
                 if (Newsfeed.Global.isMobile) { this.curVel = (this.game.canvas.width * .2) / 10; } else { this.curVel = 4 }
                 this.pineapple.body.x += this.curVel;
-                this.bckBg1.cameraOffset.x += (this.curVel / 4) / 6;
+                this.bckBg1.cameraOffset.x += (this.curVel / 4) / 8;
             }
         }
-
         if (!this.pineappleStartedGame) {
             if (this.pineapple.body.velocity.y > 0) {
                 this.pineappleStartedGame = true;
-
             }
         }
         if (this.pineapple.body.y <= this.game.canvas.height / 2 && !this.gameStarted && !this.collideOnceDone) {
             this.gameStarted = true;
         }
         if (this.gameStarted) {
-
             if (!this.isnotgetBounds) {
                 this.game.world.bounds.y -= 10;
                 this.game.world.setBounds(0, -this.game.canvas.height * .57 + this.pineapple.y, this.game.canvas.width, this.game.canvas.height);
             }
-
             this.platforms.forEach(item => {
                 this.game.physics.arcade.collide(this.pineapple, item, this.collisionHandler, function() {
                     if (this.animationCompleted2) {
-
-
-
                         if (!this.collideOnceDone) {
                             this.startGamma = true;
                             this.pineapple.alpha = 1;
-
                         }
                         if (!this.firstKill) {
                             this.itemCam = this["tile" + parseInt(item.name.split("F%")[1])];
                             this.currentLast = this["tile" + parseInt(item.name.split("F%")[1])].y;
                         }
-
                         this.curVel = 0;
                         this.animationStopped2();
                         if (item.key == "tile" || item.key == "tile6" || item.key == "tile8") {
-
-
                             if (item.key == "tile") item.loadTexture("tile2");
                             if (item.key == "tile6") item.loadTexture("tile7");
                             if (item.key == "tile8") item.loadTexture("tile9");
                             setTimeout(() => {
-
                                 if (item.key == "tile2") item.loadTexture("tile");
                                 if (item.key == "tile7") item.loadTexture("tile6");
                                 if (item.key == "tile9") item.loadTexture("tile8");
                             }, 100);
                         } else if (item.key == "tile3" || item.key == "tile4" || item.key == "tile5") {
-
                             item.alpha = 0;
-
                             //item.loadTexture("tile4");
-
                             this["diamond" + (item.key.split("tile")[1] - 2)].x = item.x;
                             this["diamond" + (item.key.split("tile")[1] - 2)].y = item.y + (item.width * .2 / item.scale.y);
                             /* this.diamondJump =  */
-
                             this["diamond" + (item.key.split("tile")[1] - 2)].animations.play("diamond" + (item.key.split("tile")[1] - 2) + "anim", 30, false);
                             item.x = this.game.canvas.width * 2.5;
-
                         }
                     }
                 }, this);
@@ -504,7 +436,7 @@ Newsfeed.Game = (function() {
                 }
             });
             if (this.charpine) {
-                if (this.pineapple.body.velocity.y < 0) {
+                if (this.pineapple.body.velocity.y < 5) {
                     if (!this.playingJump) {
                         this.playingJump = true;
                     }
@@ -513,16 +445,12 @@ Newsfeed.Game = (function() {
                     if (this.playingJump && this.animationCompleted) {
                         this.bckBg1.cameraOffset.y -= .7;
                         if (!this.dropJump) {
-
                             if (this.temp > this.game.camera.y) {
                                 this.temp = this.game.camera.y;
                             } else if (this.temp < this.game.camera.y) {
                                 this.temp = this.game.camera.y;
                             }
-                            /* console.log("JUMPDOWN", this.pineapple.body.velocity.y) */
-
                             this.dropJump = true;
-
                             this.pineapple.loadTexture("jumpDown");
                             setTimeout(() => {
                                 this.charpine = true;
@@ -533,9 +461,7 @@ Newsfeed.Game = (function() {
                     }
                 }
             }
-
             if (!this.isJumping) {
-                /* console.log("JUMPUP") */
                 this.pineapple.loadTexture("jumpUp");
                 this.animJump = this.pineapple.animations.play("jumpUp", this.fps, false);
                 this.pineapple.body.velocity.y = -(this.game.canvas.height * this.isVelocityY);
@@ -562,9 +488,6 @@ Newsfeed.Game = (function() {
                     this.isMovingLeft = true;
                 }
             }
-
-
-
             if (this.startGamma) {
                 if (this.pineapple.body.y - this.currentLast > 100 && this.pineapple.body.y > this.currentLast) {
                     this.isnotgetBounds = true;
@@ -575,7 +498,6 @@ Newsfeed.Game = (function() {
                     this.pineapple.events.onOutOfBounds.add(this.spriteOut, this);
                 }
             }
-
             if (emitterConfetti) {
                 emitterConfetti.y = this.pineapple.y + this.game.canvas.height * .4;
             }
@@ -586,7 +508,6 @@ Newsfeed.Game = (function() {
                 this.textscore22.y = this.pineapple.y - this.game.canvas.height * .3;
             }
         }
-
     };
 
     function fndiamondJump() {
@@ -600,8 +521,6 @@ Newsfeed.Game = (function() {
             return num + 1;
         }
     }
-
-
     Game.prototype.spriteOut = function() {
         if (!this.gameOver) {
             this.gameOver = true;
@@ -619,7 +538,6 @@ Newsfeed.Game = (function() {
         this.platforms.forEach(item => {
             this.game.debug.body(item);
         }); */
-
     };
     return Game;
 })(Newsfeed.Game || {});

@@ -1,19 +1,14 @@
 var Newsfeed = Newsfeed || {};
-
 Newsfeed.SignalHub = function() {
     function SignalHub() {
         SignalHub.prototype.constructor.call(this);
     }
-
     SignalHub.prototype = Object.create(Phaser.Signal.prototype);
     SignalHub.prototype.constructor = Phaser.Signal.prototype.constructor;
-
     SignalHub.prototype.initSignal = function() {
         this.add(this.onSignal.bind(this));
     };
-
     SignalHub.prototype.onSignal = function(_data) {
-
         switch (_data.type) {
             case "subscribe":
                 this.subscribe(_data.data);
@@ -67,12 +62,6 @@ Newsfeed.SignalHub = function() {
             case "item-scale-to-keep-def":
                 this.scaleItem(_data.data, false, false);
                 break;
-                /*  case "item-scale-by":
-                   this.scaleItem(_data.data, true);
-                   break;
-                 case "item-scale-to":
-                   this.scaleItem(_data.data, false);
-                   break; */
             case "item-follow-unlock":
                 this.unlockItem(_data.data);
                 break;
@@ -89,28 +78,20 @@ Newsfeed.SignalHub = function() {
             case "item-apply-velocity":
                 this.applyVelocity(_data.data.scene, _data.data.props);
                 break;
-
         }
     };
     return SignalHub;
-
 }();
 Newsfeed.Info = (function() {
     function Info(_type, _usage, _arguments) {
         this.usage = _usage;
         this.signalType = _type;
         this.arguments = _arguments;
-
     }
-
-
     return Info;
-
 })(Newsfeed.Info || {});
-
 Newsfeed.ResponsiveGame = function() {
     function ResponsiveGame() {
-
         this.responsiveTypes = [0, 1, 3, 4, 6];
         this.dimensionArr = {};
         this.orientation = "";
@@ -122,7 +103,6 @@ Newsfeed.ResponsiveGame = function() {
         this.enablePhysicsTimeout = null;
         ResponsiveGame.prototype.constructor.call(this);
     }
-
     ResponsiveGame.prototype = Object.create(Newsfeed.SignalHub.prototype);
     ResponsiveGame.prototype.constructor = Newsfeed.SignalHub.prototype.constructor;
     ResponsiveGame.prototype.init = function() {
@@ -141,28 +121,17 @@ Newsfeed.ResponsiveGame = function() {
             }
         }();
         Newsfeed.Global.isMobile = !(Newsfeed.Global.deviceDetector.device == "desktop");
-
         var c_width = ((Newsfeed.Global.isMobile) ? (Newsfeed.Global.orientation == "portrait" ? Math.min(window.innerWidth, window.innerHeight) : Math.max(window.innerWidth, window.innerHeight)) : window.innerWidth) * window.devicePixelRatio;
         var c_height = ((Newsfeed.Global.isMobile) ? (Newsfeed.Global.orientation == "portrait" ? Math.max(window.innerWidth, window.innerHeight) : Math.min(window.innerWidth, window.innerHeight)) : window.innerHeight) * window.devicePixelRatio;
-        //this.showOrHideBlackCover();
-        /* if (Newsfeed.Global.isMobile) {
-
-          window.addEventListener("resize", this.showOrHideBlackCover.bind(this))
-        } */
         return {
             width: c_width,
             height: c_height
         };
-
     };
-
     ResponsiveGame.prototype.showOrHideBlackCover = function(e, _width, _height) {
-        // console.log("resizing")
         setTimeout(function(_width, _height) {
             _width = _width || window.innerWidth;
             _height = _height || window.innerHeight;
-
-
             if (!Newsfeed.Global.isMobile && (_width * .75 <= _height)) {
                 document.getElementById("rotate").classList.add("active");
             } else if (!Newsfeed.Global.isMobile) {
@@ -175,7 +144,6 @@ Newsfeed.ResponsiveGame = function() {
             }
         }.bind(this, _width, _height), 0)
     }
-
     ResponsiveGame.prototype.getHelp = function() {
         if (this.infos.length == 0) {
             this.infos.push(new Newsfeed.Info("clear", "Use this signal before switching between states.", "no arguments"));
@@ -187,13 +155,9 @@ Newsfeed.ResponsiveGame = function() {
             this.infos.push(new Newsfeed.Info("item-scale-by", "Use this signal , so the final scale of item will be [x=>('resizeFactor' * scaleVal% value send in argument),y=>('resizeFactor' * scaleVal% value send in argument)]", "{scene:this,props:{item:'element',scaleVal:'in%',time:number,Ease:Phaser.Ease,delay:number,doOnComplete:Function}}"));
             this.infos.push(new Newsfeed.Info("item-follow-unlock", "Use this signal , If any item which has 'follows' object and needs to move. use this before moving the item", "{scene:this,props:{item:'element'}}"));
             this.infos.push(new Newsfeed.Info("item-follow-lock", "Use this signal , If any item which has 'follows' object and movement is completed. use this after moving the item", "{scene:this,props:{item:'element'}}"));
-
         }
-
         console.table(this.infos)
-            // console.table(this.infos);
     }
-
     ResponsiveGame.prototype.subscribe = function(__data) {
         if (Newsfeed.Global.isMobile) {
             __data.scene.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
@@ -202,61 +166,44 @@ Newsfeed.ResponsiveGame = function() {
             __data.scene.game.scale.scaleMode = Phaser.ScaleManager.RESIZE;
             __data.scene.game.scale.fullScreenScaleMode = Phaser.ScaleManager.RESIZE;
         }
-
         __data.scene.game.scale.pageAlignVertically = true;
         __data.scene.game.time.advancedTiming = true;
         __data.scene.game.scale.fullScreenTarget = document.body;
-
         this.c_width = window.innerWidth * window.devicePixelRatio;
         this.c_height = window.innerHeight * window.devicePixelRatio;
         this.gameResizeFactor = {
             w: (Newsfeed.Global.isMobile) ? (__data.props.orientation == "portrait") ? 1242 : 2208 : 2208,
             h: (Newsfeed.Global.isMobile) ? (__data.props.orientation == "portrait") ? 2208 : 1242 : 1242,
-
         };
-        //window.addEventListener("resize", this.onResized.bind(this, __data.scene))
-
     }
-
     ResponsiveGame.prototype.notify = function(_type, _data) {
         this.dispatch({
             type: _type,
             data: _data
         });
     };
-
     ResponsiveGame.prototype.clearData = function() {
         this.dimensionArr = {};
         this.followitemIndex = 0;
         this.mainBG = null;
     };
-
     ResponsiveGame.prototype.setBG = function(_BG) {
         this.mainBG = _BG;
-        /* this.mainBG.dimensions = {
-        "w": _BG.width,
-        "h": _BG.height
-        }; */
         _BG.isBG = true;
     };
     ResponsiveGame.prototype.isEligibleForResponsiveness = function(_type) {
         return ((this.responsiveTypes.indexOf(_type) == -1) ? false : true);
     };
     ResponsiveGame.prototype.fillDimensionArr = function(_scene, _shouldResize, _item) {
-
         _item = _item || null;
         _scene = _scene.scene;
         Object.keys(_scene).forEach(function(key) {
             if (_scene[key]) {
-                //console.log(_scene[key].name,_scene[key].resizeFactor," favlue")
-
                 if (this.isEligibleForResponsiveness(_scene[key].type) && !(_scene[key].name in this.dimensionArr)) {
-                    /* console.log(key, " Item") */
                     _scene[key].dimension = {
                         w: _scene[key].width,
                         h: _scene[key].height
                     }
-
                     this.dimensionArr[_scene[key].name] = {
                         _item: _scene[key],
                         _wDef: _scene[key].width / this.gameResizeFactor.w * _scene[key].resizeFactor,
@@ -273,42 +220,25 @@ Newsfeed.ResponsiveGame = function() {
                         _scene[key].needToFollow = true;
                     }
                     _scene[key].antialiasing = true;
-                    /* if(_scene[key].smoothed!=undefined){
-                    _scene[key].smoothed=false;
-                    } */
-                } else if (this.isEligibleForResponsiveness(_scene[key].type) && (_scene[key].name in this.dimensionArr)) {
-
-                }
+                } else if (this.isEligibleForResponsiveness(_scene[key].type) && (_scene[key].name in this.dimensionArr)) {}
             }
-
         }.bind(this));
         if (_item != null)
             _item.followFixed = false;
         if (_shouldResize) {
-            //console.log("case 1",(_item!=null)&& _item.name)
             this.resizeElements(_scene, _item, false);
         }
-        /* else if(_item.follows){
-        //console.log("case 2",_item.name)
-        this.initFollowersFix();
-        } */
-        //console.log(this.dimensionArr)
     };
-
     ResponsiveGame.prototype.resizeElements = function(__scene, __item, isActualResize) {
-
         clearTimeout(this.enablePhysicsTimeout);
         var _width = __scene.game.width;
         var _height = __scene.game.height;
         if (isActualResize) {
             this.resizeCnt++;
-            //this.showOrHideBlackCover();
         }
         Object.keys(this.dimensionArr).forEach(function(_item, key) {
-
             if (_item == null || (_item.name == key && _item.alive)) {
                 var ele = this.dimensionArr[key];
-                //_item&&console.log(_item.name," reset")
                 if (_item == null)
                     ele._item.followFixed = false;
                 ele._item.followers = [];
@@ -320,13 +250,9 @@ Newsfeed.ResponsiveGame = function() {
                     }
                 }
             }
-
         }.bind(this, __item));
-
         Object.keys(this.dimensionArr).forEach(function(_item, key) {
             if (_item == null || (_item.name == key && _item.alive)) {
-                //console.log(key, "resizing")
-
                 var ele = this.dimensionArr[key];
                 if (ele._isBG) {
                     this.scaleSprite(ele._item, _width, _height, 0, 1, true);
@@ -337,21 +263,17 @@ Newsfeed.ResponsiveGame = function() {
                         ele._item.x = (_width - ele._item.width) / 2;
                         ele._item.y = (_height - ele._item.height) / 2;
                     }
-
                 } else {
                     ele._item.scale.setTo(ele._w * _width / 1000);
                     if (!ele._item._tween) {
                         if (ele._item.body) {
-                            //console.log("Has BG");
                             (ele._item.body.velocity.x == 0) && (ele._item.body.x = ele._x * _width);
                             (ele._item.body.velocity.y == 0) && (ele._item.body.y = ele._x * _height);
                         } else {
                             ele._item.x = ele._x * _width;
                             ele._item.y = ele._y * _height
                         }
-
                     }
-
                     if (ele._item._tween) {
                         ele._item._tween.stop();
                         __scene.game.tweens.remove(ele._item._tween);
@@ -364,7 +286,6 @@ Newsfeed.ResponsiveGame = function() {
                                 ele._item.x = ele._x * _width + (ele._item._tween.timeline[0].vEnd.x - ele._item._tween.timeline[0].vStart.x) / ele._item.sizeRef.w * __scene.game.width;
                                 ele._item.y = ele._y * _height + (ele._item._tween.timeline[0].vEnd.y - ele._item._tween.timeline[0].vStart.y) / ele._item.sizeRef.h * __scene.game.height;
                             }
-
                         } else if (ele._item.tweenType == "scale") {
                             if (ele._item.body) {
                                 ele._item.body.x = ele._x * _width;
@@ -373,7 +294,6 @@ Newsfeed.ResponsiveGame = function() {
                                 ele._item.x = ele._x * _width;
                                 ele._item.y = ele._y * _height;
                             }
-
                         }
                         ele._item._tween.onComplete.dispatch();
                         ele._item._tween = null;
@@ -383,13 +303,11 @@ Newsfeed.ResponsiveGame = function() {
                     }
                 }
             }
-
         }.bind(this, __item));
         //this.followitemIndex = 1;
         if (__item == null || ((__item != undefined && __item != null) && __item.follows && __item.alive))
             this.initFollowersFix(__item);
         this.enablePhysicsTimeout = setTimeout(function(__scene) {
-
             Object.keys(this.dimensionArr).forEach(function(key) {
                 var ele = this.dimensionArr[key];
                 if (!ele._item.isBG && ele._item.bodyType && ele._item.alive) {
@@ -399,50 +317,28 @@ Newsfeed.ResponsiveGame = function() {
                     ele._item.body.static = ele._item.isStaticBody;
                 }
             }.bind(this));
-
         }.bind(this, __scene), 10);
-
     };
-
     ResponsiveGame.prototype.initFollowersFix = function(__item) {
         if (__item != null) {
-
             this.repositionOnFollow(__item, this.resizeCnt);
         } else {
             Object.keys(this.dimensionArr).forEach(function(key, index) {
-
                 if (this.dimensionArr[key]._item.alive) {
                     this.repositionOnFollow(this.dimensionArr[key]._item, this.resizeCnt);
                 }
-
             }.bind(this));
         }
-
     };
-
     ResponsiveGame.prototype.repositionOnFollow = function(_ele, resizeCnt) {
-
         if (resizeCnt == this.resizeCnt) {
-
             if (_ele.follows && !_ele.followFixed && _ele.alive) {
-                // console.log(_ele.name," Follows" ,_ele.follows.item.name)
-                /* if (_ele.follows.item.followers.indexOf(_ele) == -1) {
-                //console.log(_ele.name," Follows" ,_ele.follows.item.name)
-                _ele.follows.item.followers.push(_ele);
-                } */
-                /* (_ele.name.indexOf("slot")!=-1)&& */
                 return this.repositionOnFollow(_ele.follows.item, resizeCnt);
             } else if (_ele.alive) {
-
-
                 _ele.followers = [];
                 Object.keys(this.dimensionArr).forEach(function(key, index) {
                     if (this.dimensionArr[key]._item.follows && this.dimensionArr[key]._item.followLocked) {
-                        //(this.dimensionArr[key]._item.name.indexOf("passenger")!=-1)&&console.log(this.dimensionArr[key]._item.follows.item.name,_ele.name)
-                        //(_ele.name.indexOf("passenger")!=-1)&&console.log("Changing follow",this.dimensionArr[key]._item.follows.item.name ,_ele.name);
-
                         if (this.dimensionArr[key]._item.follows.item.name == _ele.name) {
-
                             _ele.followers.push(this.dimensionArr[key]._item);
                         }
                     }
@@ -451,20 +347,14 @@ Newsfeed.ResponsiveGame = function() {
                 _ele.followers.forEach(function(key, index) {
                     this.fixPositionForFollowers(_ele.followers[index]);
                 }.bind(this));
-                // console.log(resizeCnt, this.resizeCnt, " resize cnt")
-                //this.followitemIndex++;
-                //this.initFollowersFix();
             }
         }
-
     }
-
     ResponsiveGame.prototype.scaleSprite = function(sprite, availableSpaceWidth, availableSpaceHeight, padding, scaleMultiplier, isFullScale) {
         var scale = this.getSpriteScale((sprite._frame) ? sprite._frame.width : sprite.width, (sprite._frame) ? sprite._frame.height : sprite.height, availableSpaceWidth, availableSpaceHeight, padding, isFullScale);
         sprite.scale.x = scale * scaleMultiplier;
         sprite.scale.y = scale * scaleMultiplier;
     };
-
     ResponsiveGame.prototype.getSpriteScale = function(spriteWidth, spriteHeight, availableSpaceWidth, availableSpaceHeight, minPadding, isFullScale) {
         var ratio = 1;
         var currentDevicePixelRatio = window.devicePixelRatio;
@@ -478,25 +368,11 @@ Newsfeed.ResponsiveGame = function() {
         }
         return ratio * currentDevicePixelRatio;
     };
-
-    /* ResponsiveGame.prototype.saveDataOnDestroy= function(_item){
-    Object.keys(this.dimensionArr).forEach(function (key, index) {
-    if(this.dimensionArr[key].name==_item.name){
-    this.dimensionArr[key]= {name:_item.name,resizeFactor:_item.name,x:_item.name,y:_item.name,width:,height:,}
-    })
-    }.bind(this));
-    }; */
     ResponsiveGame.prototype.fixPositionForFollowers = function(_ele) {
-        //(_ele.followers==undefined)&&console.log(_ele.name," Name")
-        //console.log("reposition")
         _ele.followers.forEach(function(follower) {
-
             if (follower.alive && !follower.followFixed) {
-
                 var curr_item = follower;
                 var itemFollows = _ele;
-
-                //console.log(curr_item.name, " fixing")
                 if (curr_item.follows.axis == "y") {
                     if (curr_item.body) {
                         curr_item.body.y = itemFollows.y + itemFollows.height * curr_item.follows.Ydirection * curr_item.follows.Yfactor - (curr_item.follows.Ydirection * curr_item.height / 2);
@@ -509,7 +385,6 @@ Newsfeed.ResponsiveGame = function() {
                     } else {
                         curr_item.x = itemFollows.x + itemFollows.width * curr_item.follows.Xdirection * curr_item.follows.Xfactor;
                     }
-
                 } else if (curr_item.follows.axis == "xy") {
                     if (curr_item.body) {
                         curr_item.body.x = itemFollows.x + itemFollows.width * curr_item.follows.Xdirection * curr_item.follows.Xfactor - (curr_item.follows.Xdirection * curr_item.width / 2);
@@ -519,41 +394,23 @@ Newsfeed.ResponsiveGame = function() {
                         curr_item.y = itemFollows.y + itemFollows.height * curr_item.follows.Ydirection * curr_item.follows.Yfactor;
                     }
                 }
-                // console.log(curr_item.name," Follows ",itemFollows.name,curr_item.alive)
                 curr_item.followFixed = true;
-                //follower.needToFollow= false;
             }
-
         }.bind(this));
-
     };
-
-
     ResponsiveGame.prototype.updateItemPoint = function(_gameObj, _item) {
         Object.keys(this.dimensionArr).forEach(function(key) {
             if (_item.name == key) {
-                /* this.dimensionArr[_item.name]._x = ((this.dimensionArr[_item.name]._item.body) ? this.dimensionArr[_item.name]._item.body.x : this.dimensionArr[_item.name]._item.x) / _gameObj.width;
-                this.dimensionArr[_item.name]._y = ((this.dimensionArr[_item.name]._item.body) ? this.dimensionArr[_item.name]._item.body.y : this.dimensionArr[_item.name]._item.y) / _gameObj.width; */
                 this.dimensionArr[_item.name]._x = this.dimensionArr[_item.name]._item.x / _gameObj.width;
                 this.dimensionArr[_item.name]._y = this.dimensionArr[_item.name]._item.y / _gameObj.height;
             }
         }.bind(this));
     };
-    /* ResponsiveGame.prototype.updateItemScale = function (_scene, _key, _newResizeFactor) {
-      Object.keys(this.dimensionArr).forEach(function (key) {
-        if (_key == key) {
-          this.dimensionArr[_key]._w = this.dimensionArr[_key]._wDef * _newResizeFactor;
-          this.dimensionArr[_key]._item.scale.setTo(this.dimensionArr[_key]._w * _scene.game.width / 1000);
-        }
-      }.bind(this));
-    }; */
     ResponsiveGame.prototype.updateItemScale = function(_scene, _key, _newResizeFactor, saveOnComplete) {
         Object.keys(this.dimensionArr).forEach(function(key) {
-
             if (_key == key) {
                 this.dimensionArr[_key]._w = this.dimensionArr[_key]._wDef * _newResizeFactor;
                 this.dimensionArr[_key]._item.scale.setTo(this.dimensionArr[_key]._w * _scene.game.width / 1000);
-
                 if (saveOnComplete) {
                     this.dimensionArr[_key]._wDef *= _newResizeFactor;
                     this.dimensionArr[_key]._hDef *= _newResizeFactor;
@@ -579,15 +436,12 @@ Newsfeed.ResponsiveGame = function() {
         if (_item.follows && !_item.followLocked && _item.follows.axis == "y") {
             if (_item.body) {
                 _item.follows.Yfactor = (_item.y + (_item.follows.Ydirection * _item.height / 2) - _item.follows.item.y) / (_item.follows.item.height * _item.follows.Ydirection);
-
             } else {
                 _item.follows.Yfactor = (_item.y - _item.follows.item.y) / (_item.follows.item.height * _item.follows.Ydirection);
             }
-
         } else if (_item.follows && !_item.followLocked && _item.follows.axis == "x") {
             if (_item.body) {
                 _item.follows.Xfactor = (_item.x + (_item.follows.Xdirection * _item.width / 2) - _item.follows.item.x) / (_item.follows.item.width * _item.follows.Xdirection);
-
             } else {
                 _item.follows.Xfactor = (_item.x - _item.follows.item.x) / (_item.follows.item.width * _item.follows.Xdirection);
             }
@@ -595,17 +449,13 @@ Newsfeed.ResponsiveGame = function() {
             if (_item.body) {
                 _item.follows.Xfactor = (_item.x + (_item.follows.Xdirection * _item.width / 2) - _item.follows.item.x) / (_item.follows.item.width * _item.follows.Xdirection);
                 _item.follows.Yfactor = (_item.y + (_item.follows.Ydirection * _item.height / 2) - _item.follows.item.y) / (_item.follows.item.height * _item.follows.Ydirection);
-
             } else {
-                //(_item.follows.item==__data.scene.road)&&console.log(_item.follows.Xfactor,_item.name,_item.x , _item.follows.item.x , _item.follows.item.width , _item.follows.Xdirection)
                 _item.follows.Xfactor = (_item.x - _item.follows.item.x) / (_item.follows.item.width * _item.follows.Xdirection);
                 _item.follows.Yfactor = (_item.y - _item.follows.item.y) / (_item.follows.item.height * _item.follows.Ydirection);
             }
         }
         this.updateItemPoint(__data.scene.game, _item)
-
     };
-
     ResponsiveGame.prototype.moveItemTo = function(__data) {
         var _item = __data.props.item;
         var _desiredX = String(_item.x / __data.scene.game.width) + "%";
@@ -624,7 +474,6 @@ Newsfeed.ResponsiveGame = function() {
             _item.x = __data.scene.game.width * parseFloat(_x.split("%")[0]) / 100;
             _item.y = __data.scene.game.height * parseFloat(_y.split("%")[0]) / 100;
         }
-
         this.updateItemPoint(__data.scene.game, _item)
     };
     ResponsiveGame.prototype.tweenYItem = function(__data, _shouldAdd) {
@@ -638,7 +487,6 @@ Newsfeed.ResponsiveGame = function() {
             throw new Error("can't change the y-position for item which already follows other item . Make 'followLocked' of current item to false before change y-position");
         if (_item.follows && _item.followLocked && _item.follows.axis == "x" && _x != _item.x)
             throw new Error("can't change the x-position for item which already follows other item . Make 'followLocked' of current item to false before change x-position");
-        //(_item._tween != null) && (_item._tween.stop(), _scene.game.tweens.remove(_item._tween));
         this.move_twn = new Phaser.Tween(_item, _scene.game, _scene.game.tweens);
         _item._tween = this.move_twn;
         _props.alpha = (_props.alpha == undefined) ? 1 : _props.alpha;
@@ -678,8 +526,6 @@ Newsfeed.ResponsiveGame = function() {
             throw new Error("can't change the y-position for item which already follows other item . Make 'followLocked' of current item to false before change y-position");
         if (_item.follows && _item.followLocked && _item.follows.axis == "x" && _x != _item.x)
             throw new Error("can't change the x-position for item which already follows other item . Make 'followLocked' of current item to false before change x-position");
-        //(_item._tween != null) && (_item._tween.stop(), _scene.game.tweens.remove(_item._tween));
-
         this.move_twn = new Phaser.Tween(_item, _scene.game, _scene.game.tweens);
         _item._tween = this.move_twn;
         _props.alpha = (_props.alpha == undefined) ? 1 : _props.alpha;
@@ -708,8 +554,6 @@ Newsfeed.ResponsiveGame = function() {
             (!_item.tweenType) && (_item.tweenType = "move");
         }.bind(this, _scene, _item))
     }
-
-
     ResponsiveGame.prototype.tweenItem = function(__data, _shouldAdd) {
         var _scene = __data.scene;
         var _item = __data.props.item;
@@ -748,11 +592,8 @@ Newsfeed.ResponsiveGame = function() {
             (!_item._tween) && (_item._tween = _tween);
             (!_item.tweenType) && (console.log(""), _item.tweenType = "move");
         }.bind(this, _scene, _item))
-
     };
-
     ResponsiveGame.prototype.applyVelocity = function(__data, __props) {
-
         Newsfeed.Global.responsiveObj.notify("item-follow-unlock", {
             scene: __data,
             props: {
@@ -761,15 +602,9 @@ Newsfeed.ResponsiveGame = function() {
         });
         this.XVelFact = (parseFloat(__props.velX.split("%")[0])) / 100;
         this.YVelFact = (parseFloat(__props.velY.split("%")[0])) / 100;
-        //console.log(Math.sign(this.YVelFact), Math.sqrt(2 * __data.game.physics.box2d.gravity.y * __data.game.height))
         this.YVelFact = Math.sign(this.YVelFact) * Math.sqrt(2 * __data.game.physics.box2d.gravity.y * Math.sign(this.YVelFact) * this.YVelFact * __data.game.height);
-
-        // console.log(this.YVelFact," YVelFact");
-        //__props.item.body.velocity.x = __props.velX/__props.item.body.mass;
-        __props.item.body.velocity.y = this.YVelFact //this.XVelFact*__props.item.body.mass*__data.game.width*.0005;
-            // this.velocityInterval = setInterval(this.updatePosAccordingToVelocity.bind(this, __data, __props.item))
+        __props.item.body.velocity.y = this.YVelFact;
     };
-
     ResponsiveGame.prototype.updatePosAccordingToVelocity = function(__data, __item) {
         if (__item.body) {
             if (__item.body.velocity.x == 0 && __item.body.velocity.y == 0) {
@@ -778,93 +613,47 @@ Newsfeed.ResponsiveGame = function() {
                 this.updateItemPoint(__data.game, __item)
             }
         }
-
-
     };
     ResponsiveGame.prototype.scaleItem = function(__data, _shouldAdd, saveOnComplete) {
-            var _scene = __data.scene;
-            var _item = __data.props.item;
-            var _props = __data.props || {}
-            var _angle = _item.angle + (_props.angle || 0);
-            this._scaleFact = 1;
-
-
-
-            this.scale_twn = (_scene.add.tween) ? (_scene.add.tween(this)) : (new Phaser.Tween(this, _scene.game, _scene.game.tweens));
-            _item._scaleTwn = this.scale_twn;
-            _item.sizeRef = {
-                w: _scene.game.width,
-                h: _scene.game.height
-            };
-            this.scale_twn.to({
-                _scaleFact: (parseFloat(_props.scaleVal.split("%")[0])) / 100
-            }, (_props.time || 1000), (_props.Ease || Phaser.Easing.Linear.None), true, (_props.delay || 0));
-            this.scale_twn.onUpdateCallback(function(_scene, _item, _tween, _tweenElapsed, _tweenData) {
-                //console.log(this._scaleFact," scale Fact");
-                (!_item._tweenData) && (_item._tweenData = _tweenData);
-                (!_item._tween) && (_item._tween = _tween);
-                (!_item.scale_twn) && (_item.scale_twn = _tween);
-                (!_item.tweenType) && (_item.tweenType = "scale");
-                this.updateItemScale(_scene, _item.name, this._scaleFact, false)
-            }.bind(this, _scene, _item), this);
-            this.scale_twn.onComplete.addOnce(function(_callbackContext, _props, _item, _scene, saveOnComplete) {
-                _item._tweenData = null;
-                _item._tween = null;
-                _item._scaleTwn = null;
-                _item.tweenType = null;
-                if (_props.doOnComplete) {
-                    _props.doOnComplete.call(_callbackContext);
-                }
-                this._scaleFact = parseFloat(_props.scaleVal.split("%")[0]) / 100;
-                this.updateItemScale(_scene, _item.name, this._scaleFact, saveOnComplete);
-
-            }.bind(this, (_props.onCompleteContext || _scene), _props, _item, _scene, saveOnComplete), this);
-            this.scale_twn.start();
-
-        }
-        /* ResponsiveGame.prototype.scaleItem = function (__data, _shouldAdd) {
-          var _scene = __data.scene;
-          var _item = __data.props.item;
-          var _props = __data.props || {}
-          var _angle = _item.angle + (_props.angle || 0);
-          this._scaleFact = 1;
-          this.scale_twn = _scene.add.tween(this);
-          _item.sizeRef = {
+        var _scene = __data.scene;
+        var _item = __data.props.item;
+        var _props = __data.props || {}
+        var _angle = _item.angle + (_props.angle || 0);
+        this._scaleFact = 1;
+        this.scale_twn = (_scene.add.tween) ? (_scene.add.tween(this)) : (new Phaser.Tween(this, _scene.game, _scene.game.tweens));
+        _item._scaleTwn = this.scale_twn;
+        _item.sizeRef = {
             w: _scene.game.width,
             h: _scene.game.height
-          };
-          this.scale_twn.to({
+        };
+        this.scale_twn.to({
             _scaleFact: (parseFloat(_props.scaleVal.split("%")[0])) / 100
-          }, (_props.time || 1000), (_props.Ease || Phaser.Easing.Linear.None), true, (_props.delay || 0));
-          this.scale_twn.onUpdateCallback(function (_scene, _item, _tween, _tweenElapsed, _tweenData) {
+        }, (_props.time || 1000), (_props.Ease || Phaser.Easing.Linear.None), true, (_props.delay || 0));
+        this.scale_twn.onUpdateCallback(function(_scene, _item, _tween, _tweenElapsed, _tweenData) {
             (!_item._tweenData) && (_item._tweenData = _tweenData);
             (!_item._tween) && (_item._tween = _tween);
-            (!_item.tweenType) && (console.log(""), _item.tweenType = "scale");
-            this.updateItemScale(_scene, _item.name, this._scaleFact)
-          }.bind(this, _scene, _item), this);
-          this.scale_twn.onComplete.addOnce(function (_callbackContext, _props, _item, _scene) {
+            (!_item.scale_twn) && (_item.scale_twn = _tween);
+            (!_item.tweenType) && (_item.tweenType = "scale");
+            this.updateItemScale(_scene, _item.name, this._scaleFact, false)
+        }.bind(this, _scene, _item), this);
+        this.scale_twn.onComplete.addOnce(function(_callbackContext, _props, _item, _scene, saveOnComplete) {
             _item._tweenData = null;
             _item._tween = null;
+            _item._scaleTwn = null;
             _item.tweenType = null;
             if (_props.doOnComplete) {
-              _props.doOnComplete.call(_callbackContext);
+                _props.doOnComplete.call(_callbackContext);
             }
             this._scaleFact = parseFloat(_props.scaleVal.split("%")[0]) / 100;
-            this.updateItemScale(_scene, _item.name, this._scaleFact);
-
-          }.bind(this, (_props.onCompleteContext || _scene), _props, _item, _scene), this);
-          this.scale_twn.start();
-
-        }; */
+            this.updateItemScale(_scene, _item.name, this._scaleFact, saveOnComplete);
+        }.bind(this, (_props.onCompleteContext || _scene), _props, _item, _scene, saveOnComplete), this);
+        this.scale_twn.start();
+    }
     ResponsiveGame.prototype.lockItem = function(_data) {
         _data.props.item.followLocked = true;
     };
     ResponsiveGame.prototype.unlockItem = function(_data) {
         _data.props.item.followLocked = false;
     };
-
-
-
     return ResponsiveGame;
-
 }();
